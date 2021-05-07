@@ -215,7 +215,7 @@ if ( ! class_exists( 'ACF_To_REST_API_Controller' ) ) {
 				if ( $field ) {
 					$data = array( $field => get_field( $field, $this->id ) );
 				} else {
-					$data['acf'] = get_fields( $this->id );
+					$data['acf'] = $this->get_fields_ordered_by_menu_order( $this->id );
 				}
 			} else {
 				$data['acf'] = array();
@@ -228,6 +228,59 @@ if ( ! class_exists( 'ACF_To_REST_API_Controller' ) ) {
 
 			return apply_filters( 'acf/rest_api/' . $this->type . '/get_fields', $data, $request, $response, $object );
 		}
+
+    protected function get_fields_ordered_by_menu_order($post_id = false, $format_value = true){
+      // vars
+      $fields = get_field_objects( $post_id, $format_value );
+      $meta = array();
+      
+      // bail early
+      if( !$fields ) return false;
+
+      $sorted_fields = $this->array_sort($fields, 'menu_order', SORT_ASC);
+      
+      // populate
+      foreach( $sorted_fields as $k => $field ) {
+        $meta[ $k ] = $field['value'];
+      }
+      
+      // return
+      return $meta;	
+    }
+
+    protected function array_sort($array, $on, $order=SORT_ASC){
+	    $new_array = array();
+	    $sortable_array = array();
+
+	    if (count($array) > 0) {
+	        foreach ($array as $k => $v) {
+	            if (is_array($v)) {
+	                foreach ($v as $k2 => $v2) {
+	                    if ($k2 == $on) {
+	                        $sortable_array[$k] = $v2;
+	                    }
+	                }
+	            } else {
+	                $sortable_array[$k] = $v;
+	            }
+	        }
+
+	        switch ($order) {
+	            case SORT_ASC:
+	                asort($sortable_array);
+	            break;
+	            case SORT_DESC:
+	                arsort($sortable_array);
+	            break;
+	        }
+
+	        foreach ($sortable_array as $k => $v) {
+	            $new_array[$k] = $array[$k];
+	        }
+	    }
+
+	    return $new_array;
+  	}
 
 		protected function get_field_objects( $id ) {
 			if ( empty( $id ) ) {
