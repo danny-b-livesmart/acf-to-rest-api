@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: ACF to REST API
+ * Plugin Name: Forked version of ACF to REST API which orders ACF fields by menu order
  * Description: Exposes Advanced Custom Fields Endpoints in the WordPress REST API
  * Author: Aires Gonçalves
  * Author URI: http://github.com/airesvsg
