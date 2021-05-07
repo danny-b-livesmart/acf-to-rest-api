@@ -1,5 +1,5 @@
 {
-  "name": "danny-b-livesmart/wp-rest-api",
+  "name": "danny-b-livesmart/acf-to-rest-api",
   "description": "Exposes Advanced Custom Fields Endpoints in the WordPress REST API.",
   "type": "wordpress-plugin",
   "version": "3.3.3",
