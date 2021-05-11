@@ -237,7 +237,7 @@ if ( ! class_exists( 'ACF_To_REST_API_Controller' ) ) {
       // bail early
       if( !$fields ) return false;
 
-      $sorted_fields = $this->array_sort($fields, 'menu_order', SORT_ASC);
+      $sorted_fields = $this->array_sort($fields, 'rest_api_field_order', 'menu_order', SORT_ASC);
       
       // populate
       foreach( $sorted_fields as $k => $field ) {
@@ -248,18 +248,27 @@ if ( ! class_exists( 'ACF_To_REST_API_Controller' ) ) {
       return $meta;	
     }
 
-    protected function array_sort($array, $on, $order=SORT_ASC){
+    protected function array_sort($array, $preferredSortKey, $fallbackSortKey, $order=SORT_ASC){
 	    $new_array = array();
 	    $sortable_array = array();
 
 	    if (count($array) > 0) {
 	        foreach ($array as $k => $v) {
 	            if (is_array($v)) {
-	                foreach ($v as $k2 => $v2) {
-	                    if ($k2 == $on) {
-	                        $sortable_array[$k] = $v2;
-	                    }
-	                }
+
+                $preferredSortKeyExists = array_key_exists($preferredSortKey, $v);
+
+                foreach ($v as $k2 => $v2) {
+                  if ($preferredSortKeyExists) {
+                    if ($k2 == $preferredSortKey) {
+                        $sortable_array[$k] = $v2;
+                    }
+                  } else {
+                    if ($k2 == $fallbackSortKey) {
+                      $sortable_array[$k] = $v2;
+                    }
+                  }
+                }
 	            } else {
 	                $sortable_array[$k] = $v;
 	            }
